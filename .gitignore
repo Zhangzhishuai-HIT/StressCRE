@@ -1,0 +1,20 @@
+# data, results, models and intermediate files are not part of the repository (root-level folders only;
+# scripts/figures/ holds code)
+/data/
+/labels/
+/splits/
+/seqs/
+/features/
+/embeddings/
+/models/
+/variants/
+/results/
+/work/
+/logs/
+/figures/
+/manuscript/
+/manuscript_zh/
+/submission/
+/release/
+__pycache__/
+*.pyc
