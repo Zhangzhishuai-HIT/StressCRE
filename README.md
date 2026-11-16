@@ -1,6 +1,6 @@
 # StressCRE
 
-Code for the manuscript *A sequence model of soybean responses to five abiotic stresses identifies the ABA-responsive element as their shared cis-element*.
+Code for the manuscript *StressCRE: a sequence model of soybean responses to five abiotic stresses identifies the ABA-responsive element as their shared cis-element*.
 
 StressCRE predicts whether a soybean (*Glycine max*, Wm82.a4) gene is up-regulated, down-regulated or non-responsive under drought, salt, heat, cold and alkaline stress (ten tasks). It reads a 3,020-bp window around each gene (1,000 bp upstream to 500 bp downstream of the transcription start site, 20 N, 500 bp upstream to 1,000 bp downstream of the transcript end; coding sequence masked) with two networks:
 
