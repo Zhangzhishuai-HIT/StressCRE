@@ -34,15 +34,20 @@ def iron_studies():
     return out
 
 
-OVERRIDES = "/home/user/zhangzhishuai/myhermes/2080/StressCRE/labels/role_overrides.tsv"
+# role corrections: labels/role_overrides.tsv in the project, config/role_overrides.tsv in the code repository
+OVERRIDES = [f for f in ("/home/user/zhangzhishuai/myhermes/2080/StressCRE/labels/role_overrides.tsv",
+                         os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "config", "role_overrides.tsv"))
+             if os.path.exists(f)]
 
 
 def load_annotation(overrides=True):
     """SoyExpFM sample table, with StressCRE's own role corrections (labels/role_overrides.tsv: runs whose
     SoyExpFM role was 'unclear' but whose ENA sample alias / submitted file name gives the design)."""
     a = pd.read_csv(f"{SX}/metadata/sample_annotation.tsv", sep="\t", dtype=str).fillna("")
-    if overrides and os.path.exists(OVERRIDES):
-        ov = pd.read_csv(OVERRIDES, sep="\t", dtype=str).set_index("run")
+    if overrides:
+        if not OVERRIDES:
+            raise FileNotFoundError("role_overrides.tsv not found (labels/ or config/); the labels need these corrections")
+        ov = pd.read_csv(OVERRIDES[0], sep="\t", dtype=str).set_index("run")
         hit = a.run.isin(ov.index)
         for col in ("role", "cultivar", "organ_group", "genetic_modification", "treatments"):
             a.loc[hit, col] = a.loc[hit, "run"].map(ov[col])
