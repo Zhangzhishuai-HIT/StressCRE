@@ -28,6 +28,15 @@ for _d in ("~/.local/share/fonts", "~/.fonts"):
 INK, INK2, MUTED, LIGHT, GRID, BAND = "#222222", "#4a4a4a", "#8c8c8c", "#c8c8c8", "#ebebeb", "#f5f5f3"
 RED, NAVY, TEAL, OCHRE, VIOLET, MAGENTA = "#E64B35", "#2F4E9E", "#00A087", "#D9A400", "#7B6FC4", "#C2185B"
 WILD, CULT = "#3C8D2F", "#4DBBD5"
+# stresses (checked with the dataviz validator on white, all pairs: CVD dE >= 9.7, normal vision >= 15.3; lines also
+# carry one marker per stress), direction of the response, and other roles
+STRESS_COL = {"drought": "#d97b29", "salt": "#2a78d6", "heat": "#c0392b", "cold": "#1baf7a", "alkaline": "#5e3c99"}
+STRESS_MARK = {"drought": "o", "salt": "s", "heat": "^", "cold": "D", "alkaline": "v"}
+UP, DOWN, NONRESP, RESP = "#C05A00", "#2F4E9E", "#C9C9C9", "#7B3294"
+TAU = "#00594C"                       # tau alone: a dark shade of the gene-feature teal
+ALL_ACC = "#34495E"                   # all accessions (wild + cultivated)
+PC2NET = "#2a78d6"                    # the PlantCAD2 network of StressCRE (Fig. S1)
+STUDY, COMPARISON = "#2a78d6", "#86b6ef"
 # model key -> (label, colour, marker)
 MODEL = {
     "cand3": ("StressCRE", RED, "o"),
@@ -75,6 +84,6 @@ def task_axis(ax, n_tasks=10, y_group=-0.2, shade=True):
     for k, s in enumerate(STRESS):
         if shade and k % 2 == 0:
             ax.axvspan(2 * k - 0.5, 2 * k + 1.5, color=BAND, zorder=0, lw=0)
-        ax.text(2 * k + 0.5, y_group, STRESS_LABEL[s], transform=ax.get_xaxis_transform(), ha="center", va="top",
+        ax.text(2 * k + 0.5 if 2 * k + 1 < n_tasks else 2 * k, y_group, STRESS_LABEL[s], transform=ax.get_xaxis_transform(), ha="center", va="top",
                 fontsize=7, color=INK)
     ax.set_xlim(-0.6, n_tasks - 0.4)

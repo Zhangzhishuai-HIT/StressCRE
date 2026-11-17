@@ -33,7 +33,7 @@ Paths at the top of the scripts point to the authors' cluster; set them to your 
 | StressCRE | `cre_models.py`, `train_cre.py`, `cre_data.py` |
 | Comparison models | `baseline_kmer.py`, `baseline_lgbm.py`, `stack_oof.py`, `motif_scan.py`, `baseline_motif.py`, `deepcre_baseline.py`, `koh_baseline.py` |
 | Accuracy (expression-matched AUPRC, paired bootstrap over gene groups) | `cre_eval.py`, `evaluate.py`, `summarize_models.py`, `jobs/eval_candidates.sbatch` |
-| Contribution scores, motifs and element insertion | `attribution.py`, `modisco_prep.py`, `jobs/modisco.sbatch`, `modisco_motifs.py`, `dapseq_motifs.py`, `motif_qc.py`, `element_enrichment.py`, `abre_contrib.py`, `insertion.py` |
+| Contribution scores, motifs and element insertion | `attribution.py`, `modisco_prep.py`, `jobs/modisco.sbatch`, `modisco_motifs.py`, `dapseq_motifs.py`, `motif_qc.py`, `element_enrichment.py`, `abre_contrib.py`, `heat_shock_genes.py`, `insertion.py` |
 | WGD paralog pairs | `predict_all.py`, `paralog_analysis.py`, `paralog_motifs.py` |
 | Natural variants | `variant_sites.py`, `jobs/variant_af.sbatch`, `score_variants.py`, `variant_analysis.py` |
 | Wild soybean W05 | `w05_orthologs.py`, `w05_homwindows.py`, `predict_w05.py`, `w05_analysis.py` |

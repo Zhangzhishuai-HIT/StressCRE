@@ -1,7 +1,8 @@
 """Figure 4: the elements StressCRE uses.
 
-A: contribution weight matrix of the motif with most sites in each up-regulation task (TF-MoDISco-lite on the
-   contribution scores of the sequence network): the ABRE in all five.
+A: contribution weight matrix of the motif with the largest summed contribution of its sites in each up-regulation
+   task (TF-MoDISco-lite on the contribution scores of the convolutional network; an ABRE-like motif in all five), with
+   its number of sites.
 B: mean net contribution of exact ABRE sites (ACGTGG/T, either strand) in the windows of up-regulated genes, per
    100-bp bin of the TSS half and the TTS half (results/abre_contrib_position.tsv from abre_contrib.py).
 C: enrichment of known elements within 500 bp of the TSS among responsive genes (log2 odds ratio; data); dots,
@@ -38,15 +39,17 @@ T9 = fs.TASKS[:-1]          # alkaline down (32 genes, secondary task) not shown
 ga = outer[0].subgridspec(1, 5, wspace=0.25)
 tops = {}
 for j, t in enumerate(UP):
-    r = pat[(pat.task == t) & (pat.metacluster == "pos")].sort_values("n_seqlets", ascending=False).iloc[0]
+    q = pat[pat.task == t].assign(total=lambda d: d.n_seqlets * d.cwm_sum).sort_values("total", ascending=False)
+    r = q.iloc[0]                                        # motif with the largest summed contribution of its sites
+    assert ("ACGTG" in r.consensus.upper() or "CACGT" in r.consensus.upper()), (t, r.consensus)
     tops[t] = r["name"]
-    cwm = h5py.File(f"{P}/work/modisco/{t}/modisco.h5", "r")["pos_patterns"][f"pattern_{r.pattern}"]["contrib_scores"][:]
+    cwm = h5py.File(f"{P}/work/modisco/{t}/modisco.h5", "r")[f"{r.metacluster}_patterns"][f"pattern_{r.pattern}"]["contrib_scores"][:]
     sc = np.abs(cwm).sum(1)
     c = int(np.convolve(sc, np.ones(12), "valid").argmax())
     ax = fig.add_subplot(ga[0, j])
     logomaker.Logo(pd.DataFrame(cwm[c:c + 12], columns=list("ACGT")), ax=ax, color_scheme=LOGO_COL, show_spines=False, baseline_width=0.3)
     ax.set_xticks([]); ax.set_yticks([])
-    ax.set_title(f"{fs.TASK_LABEL[t]}\n{r.n_seqlets} sites", fontsize=6.5, pad=2)
+    ax.set_title(f"{fs.TASK_LABEL[t]}\n{r.n_seqlets:,} sites", fontsize=6.5, pad=2)
     if j == 0:
         fs.panel(ax, "A", x=-0.45, y=1.12)
 
@@ -59,7 +62,7 @@ for k, (half, lab) in enumerate([("TSS", "Position relative to TSS (bp)"), ("TTS
     axb0 = axb0 or ax
     for j, tk in enumerate(UP):
         q = prof[(prof.task == tk) & (prof.half == half)].sort_values("bin_start")
-        ax.plot(q.bin_start + 50, q.mean_net_contribution, marker=marks[j], ms=2.5, lw=0.7, color=fs.INK2 if j else fs.INK,
+        ax.plot(q.bin_start + 50, q.mean_net_contribution, marker=marks[j], ms=2.5, lw=0.8, color=fs.STRESS_COL[tk.split("-")[0]],
                 label=fs.STRESS_LABEL[tk.split("-")[0]])
     ax.axvline(0, color=fs.MUTED, lw=0.6, ls=(0, (3, 2)))
     ax.axhline(0, color=fs.MUTED, lw=0.4)
@@ -70,7 +73,7 @@ for k, (half, lab) in enumerate([("TSS", "Position relative to TSS (bp)"), ("TTS
         fs.panel(ax, "B", x=-0.42, y=1.04)
     else:
         plt.setp(ax.get_yticklabels(), visible=False)
-        ax.legend(fontsize=5.5, handlelength=1.4, loc="upper right", frameon=False)
+        ax.legend(fontsize=6, handlelength=1.4, loc="upper right", frameon=False)
 axC = fig.add_subplot(gb[0, 2])
 EL = ["ABRE", "G-box", "HSE", "DRE/CRT", "GCC-box", "W-box", "EE"]
 m = enr.pivot(index="element", columns="task", values="odds_ratio").reindex(index=EL, columns=T9)
@@ -111,12 +114,13 @@ pos_lab = [("tss", o) for o in (-900, -700, -500, -350, -250, -150, -100, -50)] 
 xs = np.arange(len(pos_lab))
 for k, tk in enumerate(UP):
     y = [a[(a.task == tk) & (a.anchor == an) & (a.offset == o)].lor.mean() for an, o in pos_lab]
-    axE.plot(xs[:8], y[:8], marker=marks[k], ms=3, lw=0.7, color=fs.INK2 if k else fs.INK, label=fs.STRESS_LABEL[tk.split("-")[0]])
-    axE.plot(xs[8:], y[8:], marker=marks[k], ms=3, lw=0.7, color=fs.INK2 if k else fs.INK)
+    col = fs.STRESS_COL[tk.split("-")[0]]
+    axE.plot(xs[:8], y[:8], marker=marks[k], ms=3, lw=0.8, color=col, label=fs.STRESS_LABEL[tk.split("-")[0]])
+    axE.plot(xs[8:], y[8:], marker=marks[k], ms=3, lw=0.8, color=col)
 axE.set_xticks(xs)
 axE.set_xticklabels([str(o) for _, o in pos_lab[:8]] + [f"+{o}" for _, o in pos_lab[8:]], rotation=90)
 axE.axvline(7.5, color=fs.MUTED, lw=0.6, ls=(0, (3, 2)))
-axE.set_xlabel("Upstream of TSS (bp)                    Downstream of TTS", fontsize=6.5)
+axE.set_xlabel("Upstream of TSS (bp)              Downstream of TTS (bp)", fontsize=6.5)
 axE.set_ylabel("Change in log odds (ABRE)")
 axE.legend(fontsize=6, handlelength=1.6, loc="upper left")
 fs.panel(axE, "E", x=-0.3, y=1.08)

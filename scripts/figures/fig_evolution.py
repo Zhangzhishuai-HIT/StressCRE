@@ -4,8 +4,8 @@ A: divergent WGD pairs (one copy responsive, the other non-responsive; all tasks
    in which the responsive copy gets the higher prediction) with 95% bootstrap intervals.
 B: share of divergent pairs in which the responsive copy is more tissue-specific, expressed in fewer samples or
    expressed at a lower level (sign test).
-C: W05 salt response predicted from the W05 window and from the Wm82 window of the same gene (AUPRC, 95% CI of the
-   difference in the text).
+C: W05 salt response predicted from the W05 window and from the Wm82 window of the same gene, and from the tau of the
+   Wm82 ortholog alone (AUPRC).
 D-E (when variants/scored_snps.tsv.gz exists): D, StressCRE's change in predicted up-regulation (mean of the five
    up-regulation tasks) for SNPs that destroy or create an ABRE and for other SNPs (scored subset); E, Cochran-Mantel-
    Haenszel odds ratios of being rare (MAF < 5%) for large-effect, ABRE-destroying and ABRE-creating SNPs (all
@@ -62,7 +62,7 @@ for feat, hi, lab in (("expr_tau", True, "More tissue-\nspecific"), ("expr_bread
     ok = ~np.isnan(resp) & ~np.isnan(non) & (resp != non)
     k = int(((resp > non) if hi else (resp < non))[ok].sum())
     vals.append((lab, k / ok.sum(), binomtest(k, ok.sum(), 0.5).pvalue, ok.sum()))
-axB.bar(range(3), [v[1] for v in vals], width=0.6, color=fs.INK2)
+axB.bar(range(3), [v[1] for v in vals], width=0.6, color=fs.TEAL)
 axB.axhline(0.5, color=fs.MUTED, lw=0.6, ls=(0, (3, 2)))
 for i, v in enumerate(vals):
     axB.text(i, v[1] + 0.01, pfmt(v[2]), ha="center", va="bottom", fontsize=6)
@@ -75,8 +75,9 @@ axC = fig.add_subplot(gs[0, 2])
 w = pd.read_csv(f"{P}/results/w05_validation.tsv", sep="\t")
 w = w[w.subset == "all orthologs"].set_index("task")
 x = np.arange(2)
-for j, (col, lab, fc) in enumerate((("auprc_wm82", "Wm82 window", "white"), ("auprc_w05", "W05 window", fs.RED))):
-    axC.bar(x + (j - 0.5) * 0.36, [w.loc["salt-up", col], w.loc["salt-down", col]], width=0.34, color=fc, edgecolor=fs.RED, lw=0.8, label=lab)
+for j, (col, lab, fc, ec) in enumerate((("auprc_wm82", "Wm82 window", "white", fs.RED), ("auprc_w05", "W05 window", fs.RED, fs.RED),
+                                         ("auprc_tau", "Tau alone", fs.TAU, fs.TAU))):
+    axC.bar(x + (j - 1) * 0.27, [w.loc["salt-up", col], w.loc["salt-down", col]], width=0.25, color=fc, edgecolor=ec, lw=0.8, label=lab)
 prev = [w.loc["salt-up", "pos"] / w.loc["salt-up", "n"], w.loc["salt-down", "pos"] / w.loc["salt-down", "n"]]
 for xx, p_ in zip(x, prev):
     axC.plot([xx - 0.4, xx + 0.4], [p_, p_], color=fs.MUTED, lw=0.6, ls=(0, (3, 2)))
@@ -102,13 +103,13 @@ if VAR:
     axD.axhline(0, color=fs.MUTED, lw=0.6, ls=(0, (3, 2)))
     axD.set_xticks(range(1, 4)); axD.set_xticklabels([g[1] for g in groups])
     for i, d in enumerate(data, 1):
-        axD.text(i, 1.0, f"n = {len(d):,}", transform=axD.get_xaxis_transform(), ha="center", va="bottom", fontsize=5.5, color=fs.MUTED)
+        axD.text(i, 1.0, f"n = {len(d):,}", transform=axD.get_xaxis_transform(), ha="center", va="bottom", fontsize=6, color=fs.MUTED)
     axD.set_ylabel("Change in predicted up-regulation\n(percentage points, mean of five tasks)")
     fs.panel(axD, "D", x=-0.42, y=1.08)
     axE = fig.add_subplot(gd[0, 1])
     rowsE = [("large effect -> rare (MAF<5%)", "Large effect: rare"), ("ABRE destroyed -> rare (MAF<5%)", "Destroys an ABRE: rare"),
              ("ABRE created -> rare (MAF<5%)", "Creates an ABRE: rare")]
-    grp = [("all accessions", "All", fs.INK2), ("wild", "Wild", fs.WILD), ("cultivated", "Cultivated", fs.CULT)]
+    grp = [("all accessions", "All", fs.ALL_ACC), ("wild", "Wild", fs.WILD), ("cultivated", "Cultivated", fs.CULT)]
     y, ticks, labels = 0, [], []
     for key, lab in rowsE:
         for g, gl, col in grp:
@@ -123,19 +124,19 @@ if VAR:
             y += 1
         y += 0.5
     r0 = "differentiated (|AF cult - AF wild| >= 0.5) -> large effect, common SNPs"
-    for mdl, fc, dy in (("StressCRE", fs.INK2, -0.15), ("CNN, all rows", "white", 0.15)):
+    for mdl, fc, dy in (("StressCRE", fs.ALL_ACC, -0.15), ("CNN, all rows", "white", 0.15)):
         r = summ[(summ.model == mdl) & (summ.analysis == r0)]
         if len(r):
             r = r.iloc[0]
-            axE.plot([r.ci_lo, r.ci_hi], [y + dy, y + dy], color=fs.INK2, lw=0.9)
-            axE.scatter(r.odds_ratio, y + dy, s=16, color=fc, edgecolor=fs.INK2, linewidth=0.8, zorder=3)
+            axE.plot([r.ci_lo, r.ci_hi], [y + dy, y + dy], color=fs.ALL_ACC, lw=0.9)
+            axE.scatter(r.odds_ratio, y + dy, s=16, color=fc, edgecolor=fs.ALL_ACC, linewidth=0.8, zorder=3)
     ticks.append(y); labels.append("Differentiated: large effect")
     axE.axvline(1, color=fs.MUTED, lw=0.6, ls=(0, (3, 2)))
     axE.set_yticks(ticks); axE.set_yticklabels(labels, fontsize=6); axE.invert_yaxis()
     axE.set_xlabel("Odds ratio (Cochran–Mantel–Haenszel, 95% CI)")
-    axE.scatter([], [], s=16, color=fs.INK2, label="StressCRE, 300,000 scored combinations")
-    axE.scatter([], [], s=16, color="white", edgecolor=fs.INK2, linewidth=0.8, label="All combinations")
-    axE.legend(loc="lower left", bbox_to_anchor=(0, 1.0), ncol=2, fontsize=5.5, frameon=False, handletextpad=0.2, columnspacing=1.0)
-    fs.panel(axE, "E", x=-0.55, y=1.1)
+    axE.scatter([], [], s=16, color=fs.ALL_ACC, label="StressCRE, 300,000 scored combinations")
+    axE.scatter([], [], s=16, color="white", edgecolor=fs.ALL_ACC, linewidth=0.8, label="All combinations")
+    axE.legend(loc="lower left", bbox_to_anchor=(0, 1.0), ncol=2, fontsize=6, frameon=False, handletextpad=0.2, columnspacing=1.0)
+    fs.panel(axE, "E", x=-0.43, y=1.08)
 fs.save(fig, f"{P}/figures", "fig5_evolution")
 print("written figures/fig5_evolution", "with variant panels" if VAR else "(no variant panels yet)")

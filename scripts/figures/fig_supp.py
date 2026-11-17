@@ -26,7 +26,7 @@ for ax, (kind, lab) in zip(axes, (("cnn", "Convolutional network"), ("pc2", "Pla
         run = json.load(open(f"{P}/models/v1_{kind}_main_seed{s}/run.json"))
         for k, f in run["folds"].items():
             h = pd.DataFrame(f["history"])
-            ax.plot(h.epoch, h.val_matched_auprc, color=fs.RED if kind == "cnn" else fs.INK2, lw=0.5, alpha=0.6)
+            ax.plot(h.epoch, h.val_matched_auprc, color=fs.RED if kind == "cnn" else fs.PC2NET, lw=0.5, alpha=0.6)
             ax.scatter(f["best_epoch"], h.val_matched_auprc[h.epoch == f["best_epoch"]].values[0], s=6, color=fs.INK, zorder=3)
     ax.axvline(20, color=fs.MUTED, lw=0.6, ls=(0, (3, 2)))
     ax.set_title(lab, fontsize=7)
@@ -40,16 +40,17 @@ fs.save(fig, f"{P}/figures", "figS1_training")
 cov = pd.read_csv(f"{P}/features/gene_covariates.tsv", sep="\t").set_index("gene")
 fig, ax = plt.subplots(figsize=(fs.W2, 62 * fs.MM))
 off = np.linspace(-0.3, 0.3, 6)
+T9 = fs.TASKS[:-1]                    # alkaline down-regulation (3 positives in this design) left out
 for k, m in enumerate(fs.ORDER):
     f = f"{P}/results/v1_{m}_chrom_predictions.tsv.gz"
     if not os.path.exists(f):
         continue
     sc = scores(cov, pd.read_csv(f, sep="\t"))
-    xs = [i + off[k] for i, t in enumerate(fs.TASKS) if t in sc]
-    ys = [sc[t]["auprc_matched"] / sc[t]["prevalence_matched"] for t in fs.TASKS if t in sc]
+    xs = [i + off[k] for i, t in enumerate(T9) if t in sc]
+    ys = [sc[t]["auprc_matched"] / sc[t]["prevalence_matched"] for t in T9 if t in sc]
     lab, col, mk = fs.MODEL[m]
     ax.scatter(xs, ys, s=14 if m == "cand3" else 10, marker=mk, color=col, edgecolor="white", linewidth=0.4, label=lab, zorder=3)
-fs.task_axis(ax, y_group=-0.13)
+fs.task_axis(ax, n_tasks=9, y_group=-0.13)
 ax.axhline(1, color=fs.MUTED, lw=0.6, ls=(0, (3, 2)))
 ax.set_ylabel("Fold enrichment\n(matched AUPRC / share)")
 ax.legend(ncol=6, loc="lower left", bbox_to_anchor=(0, 1.0), handletextpad=0.2, columnspacing=0.9)
@@ -64,9 +65,6 @@ for k, (m, lab, col, fc) in enumerate((("stresscre_shared", "StressCRE, windows 
     xs = np.arange(len(fs.TASKS)) + (k - 0.5) * 0.3
     ax.vlines(xs, q.auroc_lo, q.auroc_hi, color=col, lw=0.8)
     ax.scatter(xs, q.pair_auroc, s=14, color=fc, edgecolor=col, linewidth=0.8, zorder=3, label=lab)
-for i, t in enumerate(fs.TASKS):
-    n = int(pm[(pm.model == "kmer") & (pm.task == t)].n_divergent.iloc[0])
-    ax.text(i, 0.02, f"n = {n}", transform=ax.get_xaxis_transform(), ha="center", fontsize=5.5, color=fs.MUTED)
 fs.task_axis(ax, y_group=-0.13)
 ax.axhline(0.5, color=fs.MUTED, lw=0.6, ls=(0, (3, 2)))
 ax.set_ylabel("Paired AUROC,\ndivergent pairs")

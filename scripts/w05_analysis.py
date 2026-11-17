@@ -48,6 +48,7 @@ orth = pd.read_csv(f"{P}/seqs/w05_homwindows.tsv", sep="\t")      # homologous-a
 pw = pd.read_csv(f"{P}/results/w05_predictions.tsv.gz", sep="\t")
 pa = pd.read_csv(f"{P}/results/v1_stresscre_allgenes.tsv.gz", sep="\t")
 pa = pa[pa.task.isin(["salt-up", "salt-down"])]
+tau = pd.read_csv(f"{P}/features/gene_covariates.tsv", sep="\t").set_index("gene").expr_tau   # reference: tau of the Wm82 ortholog alone
 v1 = strict_calls(pd.read_csv(f"{P}/labels/labels_v1.tsv.gz", sep="\t"))
 lfc_wm82 = v1[v1.stress == "salt"].set_index("gene").meta_lfc
 rows = []
@@ -58,14 +59,15 @@ for d in ("up", "down"):
     q["y"] = lab[d].reindex(q.gene_a4).values
     q["lfc_w05"] = w.lfc_w05.reindex(q.gene_a4).values
     q["lfc_wm82"] = lfc_wm82.reindex(q.gene_a4).values
+    q["tau"] = tau.reindex(q.gene_a4).values
     for subset, m in (("all orthologs", np.ones(len(q), bool)), ("windows differ >= 2%", q.window_edit_frac.values >= 0.02)):
         s = q[m & q.y.notna().values]
         y = s.y.values.astype(int)
         res = dict(task=t, subset=subset, n=len(s), pos=int(y.sum()))
         if y.sum() >= 5 and (1 - y).sum() >= 5:
-            for k in ("p_w05", "p_wm82"):
-                res[f"auroc_{k[2:]}"] = round(roc_auc_score(y, s[k]), 4)
-                res[f"auprc_{k[2:]}"] = round(average_precision_score(y, s[k]), 4)
+            for k, nm in (("p_w05", "w05"), ("p_wm82", "wm82"), ("tau", "tau")):
+                res[f"auroc_{nm}"] = round(roc_auc_score(y, s[k]), 4)
+                res[f"auprc_{nm}"] = round(average_precision_score(y, s[k]), 4)
             da, dp = [], []
             for _ in range(1000):
                 ii = rng.integers(0, len(s), len(s))
