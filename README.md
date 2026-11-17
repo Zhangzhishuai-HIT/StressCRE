@@ -1,6 +1,6 @@
 # StressCRE
 
-Code for the manuscript *StressCRE: a sequence model of soybean responses to five abiotic stresses identifies the ABA-responsive element as a shared activating cis-element*.
+Code for the manuscript *StressCRE: a sequence model of soybean responses to five abiotic stresses learns the abscisic acid-responsive element as its main activating cis-element*.
 
 StressCRE predicts whether a soybean (*Glycine max*, Wm82.a4) gene is up-regulated, down-regulated or non-responsive under drought, salt, heat, cold and alkaline stress (ten tasks). It reads a 3,020-bp window around each gene (1,000 bp upstream to 500 bp downstream of the transcription start site, 20 N, 500 bp upstream to 1,000 bp downstream of the transcript end; coding sequence masked) with two networks:
 
@@ -26,15 +26,15 @@ Paths at the top of the scripts point to the authors' cluster; set them to your 
 
 | Step | Scripts |
 |---|---|
-| Stress-versus-control comparisons, DESeq2 per comparison | `contrasts.py`, `inventory_contrasts.py`, `de_prepare.py`, `de_run.R`, `jobs/pilot_de.sbatch` |
+| Stress-versus-control comparisons, DESeq2 per comparison | `contrasts.py`, `inventory_contrasts.py`, `de_prepare.py`, `de_run.R`, `jobs/pilot_de.sbatch` (the labels of the paper use the work directory `work/de_v1`) |
 | Labels (vote over studies and random-effects meta-analysis) | `pilot_labels.py` (`pilot_labels.py work/de_v1 <project> v1` writes `labels/labels_v1.tsv.gz`) |
 | Sequence windows and gene features | `make_windows.py`, `check_windows.py`, `gene_features.py`, `kmer_features.py`, `embed_plantcad2.py`, `fix_embed_chunk_rows.py` |
 | Gene groups and folds (protein families, WGD pairs, similar windows) | `jobs/protein_families.sbatch`, `paralog_pairs.py`, `jobs/promoter_sim.sbatch`, `make_splits.py` |
 | StressCRE | `cre_models.py`, `train_cre.py`, `cre_data.py` |
 | Comparison models | `baseline_kmer.py`, `baseline_lgbm.py`, `stack_oof.py`, `motif_scan.py`, `baseline_motif.py`, `deepcre_baseline.py`, `koh_baseline.py` |
 | Accuracy (expression-matched AUPRC, paired bootstrap over gene groups) | `cre_eval.py`, `evaluate.py`, `summarize_models.py`, `week2_summary.py` (means over tasks and test designs), `jobs/eval_candidates.sbatch`, `jobs/eval_designs.sbatch` (chromosome and random designs), `similarity_diagnostic.py` and `jobs/similarity_diagnostic.sbatch` (without test genes sharing a similar window) |
-| Contribution scores, motifs and element insertion | `attribution.py`, `modisco_prep.py`, `jobs/modisco.sbatch`, `modisco_motifs.py`, `dapseq_motifs.py`, `motif_qc.py`, `element_enrichment.py`, `abre_contrib.py`, `heat_shock_genes.py`, `insertion.py`, `insertion_logodds.py`, `jobs/insertion_runs.sh` |
-| WGD paralog pairs | `predict_all.py`, `paralog_analysis.py`, `paralog_motifs.py` |
+| Contribution scores, motifs and element insertion | `attribution.py`, `modisco_prep.py`, `jobs/modisco.sbatch`, `modisco_motifs.py`, `motif_summary.py`, `dapseq_motifs.py`, `motif_qc.py`, `element_enrichment.py`, `abre_contrib.py`, `heat_shock_genes.py`, `insertion.py`, `insertion_logodds.py`, `jobs/insertion_runs.sh` |
+| WGD paralog pairs | `predict_all.py`, `paralog_analysis.py`, `paralog_motifs.py`, `jobs/paralog_motifs.sbatch` |
 | Natural variants | `variant_sites.py`, `jobs/variant_af.sbatch`, `score_variants.py`, `variant_analysis.py` |
 | Wild soybean W05 | `w05_orthologs.py`, `w05_homwindows.py`, `predict_w05.py`, `w05_analysis.py` |
 | External files (direct downloads with checksums) | `fetch_external.py` |
@@ -51,7 +51,7 @@ Python 3.10 with PyTorch 2.5.1, transformers 4.46.3, mamba_ssm and causal_conv1d
 - PlantCAD2-Small weights (Hugging Face, kuleshov-group).
 - Soybean DAP-seq peaks of 148 transcription factors (Jiao et al. 2024, SoyTFBase) and JASPAR 2024 CORE plants motifs.
 - DeepCRE soybean models (Peleke et al. 2024) and the released adapters of Koh et al. (2026).
-- SNPs of 1,511 resequenced accessions (Zhang et al. 2022; Legume Information System, Wm82.gnm2.div.Zhang_Jiang_2020). The 300,000 SNP–gene combinations scored with StressCRE (150,000 at random and 150,000 with a minor allele frequency of at least 5%) are listed in Data S2 of the article.
+- SNPs of 1,511 resequenced accessions (Zhang et al. 2022; Legume Information System, Wm82.gnm2.div.Zhang_Jiang_2020). The 300,000 SNP–gene combinations scored with StressCRE (150,000 at random and 150,000 with a minor allele frequency of at least 5%) are listed in Data S2 of the article; their rows of `variants/panel_snps.tsv.gz` form the `--subset` list of `score_variants.py`.
 - *G. soja* W05 genome (Xie et al. 2019) and RNA-seq (BioProject PRJNA521577).
 
 ## License

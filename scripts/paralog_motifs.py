@@ -3,8 +3,8 @@
 For every task, divergent pairs = one copy strictly up (or down), the other non-responsive (pairs from
 results/wgd_pairs.tsv with protein identity < 99%). In both copies' windows, sites of the canonical element of the
 stress are counted on both strands (regular expressions on the unmasked bases of the TSS half, positions
--1000..+500, and of the TTS half): ABRE ACGTG(G|T) for drought and salt, DRE/CRT CCGAC for cold (and drought),
-HSE nGAAnnTTCn for heat, W-box TTGAC(C|T) and G-box CACGTG as further references.
+-1000..+500, and of the TTS half). All five elements are tested for every task: ABRE ACGTG(G|T), DRE/CRT core CCGAC,
+HSE nGAAnnTTCn, W-box TTGAC(C|T) and G-box CACGTG (the printed summary shows the canonical element of each stress).
 Reported per task x element: pairs, share of pairs in which the responding copy has more sites (among pairs whose
 counts differ), sign-test P with the Benjamini-Hochberg q over all tests that have pairs with differing counts, and,
 for all pairs whose two copies are both labelled, the Spearman correlation between the count difference and the
