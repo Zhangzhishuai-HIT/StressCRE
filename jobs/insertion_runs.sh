@@ -8,6 +8,8 @@ set -euo pipefail
 P=/home/user/zhangzhishuai/myhermes/2080/StressCRE
 PY=${PY:-python}
 M=$1
-$PY -I $P/scripts/insertion.py $P $P/features/insertion_elements.tsv $M
-$PY -I $P/scripts/insertion.py $P $P/features/insertion_elements.tsv $M --offsets -132 --singles-only --out results/insertion_m132.tsv.gz
+E=$P/features/insertion_elements.tsv                                  # in the code repository: config/insertion_elements.tsv
+[ -f $E ] || E=$(dirname "$0")/../config/insertion_elements.tsv
+$PY -I $P/scripts/insertion.py $P $E $M
+$PY -I $P/scripts/insertion.py $P $E $M --offsets -132 --singles-only --out results/insertion_m132.tsv.gz
 $PY -I $P/scripts/insertion_logodds.py $P --add results/insertion_m132.tsv.gz

@@ -17,6 +17,8 @@ $MAMBA create -y -p $E --override-channels -c conda-forge -c bioconda \
     pyfaidx bedtools blast meme logomaker
 echo "created $(date)"
 $E/bin/python -m pip install --no-input modisco-lite
+# added later with pip (variant tests, W05 alignments, Koh et al. adapters): statsmodels 0.14.5, edlib 1.3.9, peft 0.18.1
+$E/bin/python -m pip install --no-input statsmodels==0.14.5 edlib==1.3.9.post1 peft==0.18.1
 echo "pip done $(date)"
 $E/bin/python -c "import numpy, pandas, sklearn, lightgbm, pyfaidx, modiscolite; print('numpy', numpy.__version__, '| pandas', pandas.__version__, '| sklearn', sklearn.__version__, '| lightgbm', lightgbm.__version__)"
 for t in blastn makeblastdb bedtools tomtom fimo streme; do printf "%s: " $t; [ -x $E/bin/$t ] && echo ok || echo MISSING; done

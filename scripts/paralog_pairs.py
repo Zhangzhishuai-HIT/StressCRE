@@ -1,7 +1,7 @@
 """Whole-genome-duplication paralog pairs in Wm82.a4 and how often their stress labels differ (pilot).
 
-Pairs = reciprocal best protein hits (MMseqs2, >= 50% identity, >= 50% coverage) between genes on
-different chromosomes that sit in collinear blocks: of the 10 genes on each side of gene A, at least
+Pairs = reciprocal best protein hits (MMseqs2, >= 50% identity, >= 50% coverage) between genes that sit in
+collinear blocks (mostly on different chromosomes; same-chromosome pairs are flagged in same_chrom): of the 10 genes on each side of gene A, at least
 3 have one of their top-5 hits within 20 genes of gene B (a simplified MCScanX anchor rule).
 Same-chromosome pairs within 10 genes are reported separately as tandem duplicates.
 

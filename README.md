@@ -1,6 +1,6 @@
 # StressCRE
 
-Code for the manuscript *StressCRE: a sequence model of soybean responses to five abiotic stresses identifies the ABA-responsive element as their shared cis-element*.
+Code for the manuscript *StressCRE: a sequence model of soybean responses to five abiotic stresses identifies the ABA-responsive element as their shared activating cis-element*.
 
 StressCRE predicts whether a soybean (*Glycine max*, Wm82.a4) gene is up-regulated, down-regulated or non-responsive under drought, salt, heat, cold and alkaline stress (ten tasks). It reads a 3,020-bp window around each gene (1,000 bp upstream to 500 bp downstream of the transcription start site, 20 N, 500 bp upstream to 1,000 bp downstream of the transcript end; coding sequence masked) with two networks:
 
@@ -41,7 +41,7 @@ Paths at the top of the scripts point to the authors' cluster; set them to your 
 
 ## Requirements
 
-Python 3.10 with PyTorch 2.5.1, transformers 4.46.3, mamba_ssm and causal_conv1d (for PlantCAD2), PEFT 0.18.1 (for the adapters of Koh et al. 2026), LightGBM 4.7.0, scikit-learn, statsmodels, NumPy, pandas, SciPy, h5py, edlib, numba and tfmodisco-lite 3.0; R 4.3.3 with DESeq2 1.42.0; MEME suite 5.5.9 (FIMO, Tomtom, STREME), MMseqs2 18, BLAST+, DIAMOND and bcftools. `jobs/setup_env.sh` and `jobs/setup_env_gpu.sh` create the Python environments of the cluster and of the GPU machine; MMseqs2, BLAST+, DIAMOND, bcftools and R with DESeq2 were used from separate installations. `train_cre.py` gained the `--features` option after the main models were trained (their `run.json` records the earlier file); its default (`gene`) is the code path used for them. GPU steps (PlantCAD2 representations, training, attribution, insertion, SNP scoring) were run on NVIDIA RTX 4090 GPUs.
+Python 3.10 with PyTorch 2.5.1, transformers 4.46.3, mamba_ssm and causal_conv1d (for PlantCAD2), PEFT 0.18.1 (for the adapters of Koh et al. 2026), LightGBM 4.7.0, scikit-learn, statsmodels, NumPy, pandas, SciPy, h5py, edlib, numba and tfmodisco-lite 3.0; R 4.3.3 with DESeq2 1.42.0; MEME suite 5.5.9 (FIMO, Tomtom, STREME), MMseqs2 18, BLAST+, DIAMOND and bcftools. `jobs/setup_env.sh` creates the Python environment (with BLAST+, the MEME suite, TF-MoDISco-lite, statsmodels, edlib and PEFT); `jobs/setup_env_gpu.sh` adds PyTorch and transformers and copies prebuilt mamba_ssm 2.2.4 and causal_conv1d 1.5.0.post8 from another local environment (installing them with pip works as well). MMseqs2, DIAMOND, bcftools and R with DESeq2 came from separate installations. `train_cre.py` gained the `--features` option after the main models were trained (their `run.json` records the earlier file); its default (`gene`) is the code path used for them. GPU steps (PlantCAD2 representations, training, attribution, insertion, SNP scoring) were run on NVIDIA RTX 4090 GPUs.
 
 ## Input data (public)
 
