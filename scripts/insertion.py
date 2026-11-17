@@ -11,7 +11,8 @@ Effect = change in StressCRE's predicted probability (construct - unmodified win
 
 Usage: CUDA_VISIBLE_DEVICES=<g> python -I insertion.py <project> <elements.tsv> <model_dir> [--n-bg 100]
 Writes results/insertion_effects.tsv.gz (background, construct, element, partner, anchor, offset, strand, task, effect).
-Then insertion_logodds.py adds p0 (prediction for the unmodified window) and lor (change in log odds).
+Each run overwrites its --out file; insertion_logodds.py merges the runs (--add) and adds p0 (prediction for the
+unmodified window) and lor (change in log odds). The paper's runs: jobs/insertion_runs.sh.
 """
 import argparse, glob, os, sys, time
 import numpy as np

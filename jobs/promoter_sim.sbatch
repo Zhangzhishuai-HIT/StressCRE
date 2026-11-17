@@ -5,8 +5,9 @@
 #SBATCH --mem=10G
 #SBATCH --time=06:00:00
 #SBATCH --output=/home/user/zhangzhishuai/myhermes/2080/StressCRE/logs/promoter_sim.%j.log
-# All-vs-all megablast of the 3,020-bp windows (CDS already masked to N; DUST on): window pairs with
-# >= 80% identity over >= 200 bp become "promoter-similar" edges for the split groups (plan step 3).
+# All-vs-all megablast of the 3,020-bp windows (CDS already masked to N; DUST on): writes the window hits with
+# >= 80% identity over >= 200 bp (work/psim/a4_win_edges.m8). make_splits.py groups the pairs with >= 95% over >= 300 bp
+# (at most two such alignments per window); similarity_diagnostic.py uses those with >= 90% over >= 300 bp.
 # (MMseqs2 nucleotide search needed > 7 GB to index 160 Mb; megablast runs in < 2 GB.)
 set -euo pipefail
 P=/home/user/zhangzhishuai/myhermes/2080/StressCRE

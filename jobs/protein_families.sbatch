@@ -7,8 +7,8 @@
 #SBATCH --output=/home/user/zhangzhishuai/myhermes/2080/StressCRE/logs/protein_families.%j.log
 # Protein families and the all-against-all protein search (MMseqs2 18.8cc5c) used by gene_features.py, make_splits.py
 # and paralog_pairs.py:
-#   work/fam/a4_c30_cluster.tsv  families: clusters at >= 30% identity with >= 50% coverage of the shorter protein
-#   work/fam/a4_self.m8          hits at >= 50% identity and >= 50% coverage (at most 40 per query)
+#   work/fam/a4_c30_cluster.tsv  families: clusters at >= 30% identity covering >= 50% of each member protein
+#   work/fam/a4_self.m8          hits at >= 50% identity covering >= 50% of both proteins (at most 40 per query)
 #   sbatch jobs/protein_families.sbatch              (OUT=<dir> sbatch --export=ALL,OUT=<dir> ... to write elsewhere)
 set -euo pipefail
 P=/home/user/zhangzhishuai/myhermes/2080/StressCRE

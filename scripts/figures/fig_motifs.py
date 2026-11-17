@@ -119,7 +119,7 @@ for k, tk in enumerate(UP):
     axE.plot(xs[:8], y[:8], marker=marks[k], ms=3, lw=0.8, color=col, label=fs.STRESS_LABEL[tk.split("-")[0]])
     axE.plot(xs[8:], y[8:], marker=marks[k], ms=3, lw=0.8, color=col)
 axE.set_xticks(xs)
-axE.set_xticklabels([str(o) for _, o in pos_lab[:8]] + [f"+{o}" for _, o in pos_lab[8:]], rotation=90)
+axE.set_xticklabels([(f"\u2212{-o}" if o < 0 else str(o)) for _, o in pos_lab[:8]] + [f"+{o}" for _, o in pos_lab[8:]], rotation=90)
 axE.axvline(7.5, color=fs.MUTED, lw=0.6, ls=(0, (3, 2)))
 axE.set_xlabel("Upstream of TSS (bp)              Downstream of TTS (bp)", fontsize=6.5)
 axE.set_ylabel("Change in log odds (ABRE)")

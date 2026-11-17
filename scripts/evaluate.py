@@ -6,7 +6,7 @@ With --matched, negatives are reweighted so that their joint distribution over b
 unexpressed genes form their own bin) matches the positives': the "expression-context-matched" metric.
 Positives in bins without any negative are dropped (their share is reported).
 
-Usage: python3 -I evaluate.py <project_dir> <predA.tsv.gz> [<predB.tsv.gz>] [--n 2000] [--matched] [--out out.tsv]
+Usage: python3 -I evaluate.py <project_dir> <predA.tsv.gz> [<predB.tsv.gz>] [--n 1000] [--matched] [--out out.tsv]
   pred files: columns gene, task, fold, y, pred (out-of-fold test predictions)
 """
 import argparse
@@ -16,7 +16,7 @@ from sklearn.metrics import average_precision_score, roc_auc_score
 
 ap = argparse.ArgumentParser()
 ap.add_argument("project"); ap.add_argument("a"); ap.add_argument("b", nargs="?")
-ap.add_argument("--n", type=int, default=2000); ap.add_argument("--out")
+ap.add_argument("--n", type=int, default=1000); ap.add_argument("--out")
 ap.add_argument("--matched", action="store_true")
 args = ap.parse_args()
 grp = pd.read_csv(f"{args.project}/splits/groups.tsv", sep="\t").set_index("gene").group

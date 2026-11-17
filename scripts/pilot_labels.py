@@ -13,9 +13,10 @@ Two gene-level rules are compared:
          non-responsive = q > 0.5, |mean| < 0.3, tested in >= 3 studies.
 Strict labels (used downstream) = both rules agree for up/down; non-responsive = meta rule and the
 vote rule calls neither up nor down.
-Writes results/pilot_label_counts.tsv, results/pilot_label_overlap.tsv, labels/pilot_labels.tsv.gz.
+Writes results/pilot_label_counts.tsv, results/pilot_label_overlap.tsv, labels/pilot_labels.tsv.gz (tag v1:
+labels/labels_v1.tsv.gz, results/label_counts_v1.tsv, results/label_overlap_v1.tsv).
 
-Usage: python3 -I pilot_labels.py <work_dir> <project_dir> [tag=pilot]
+Usage: python3 -I pilot_labels.py <work_dir> <project_dir> [tag=pilot]     (the paper: work/de_v1 <project> v1)
 """
 import os, sys
 from math import sqrt
@@ -24,7 +25,11 @@ import pandas as pd
 from scipy.special import erfc
 
 W, P = sys.argv[1:3]
-TAG = sys.argv[3] if len(sys.argv) > 3 else "pilot"   # output names: labels/<TAG>_labels.tsv.gz etc.
+TAG = sys.argv[3] if len(sys.argv) > 3 else "pilot"
+# output names: pilot -> labels/pilot_labels.tsv.gz, results/pilot_label_*.tsv; v1 (the labels of the paper) ->
+# labels/labels_v1.tsv.gz, results/label_counts_v1.tsv, results/label_overlap_v1.tsv
+NAMES = (("labels/pilot_labels.tsv.gz", "results/pilot_label_counts.tsv", "results/pilot_label_overlap.tsv") if TAG == "pilot"
+         else (f"labels/labels_{TAG}.tsv.gz", f"results/label_counts_{TAG}.tsv", f"results/label_overlap_{TAG}.tsv"))
 SX = "/home/user/zhangzhishuai/myhermes/2080/SoyExpFM"
 man = pd.read_csv(f"{W}/CONTRASTS.tsv", sep="\t", dtype=str)
 man = man[man.species == "Glycine max"]          # wild-soybean studies are kept for testing
@@ -113,12 +118,12 @@ cnt = pd.DataFrame(rows, columns=["stress", "studies", "contrasts", "genes_teste
                                   "vote_up", "vote_down", "vote_nonresp", "meta_up", "meta_down",
                                   "meta_nonresp", "strict_up", "strict_down", "strict_nonresp"])
 os.makedirs(f"{P}/results", exist_ok=True); os.makedirs(f"{P}/labels", exist_ok=True)
-cnt.to_csv(f"{P}/results/{TAG}_label_counts.tsv", sep="\t", index=False)
-pd.concat(frames).to_csv(f"{P}/labels/{TAG}_labels.tsv.gz", sep="\t", index=False)
+cnt.to_csv(f"{P}/{NAMES[1]}", sep="\t", index=False)
+pd.concat(frames).to_csv(f"{P}/{NAMES[0]}", sep="\t", index=False)
 names = sorted(sets)
 ov = [[d, i] + [len(sets[i][d] & sets[j][d]) for j in names] for d in ("up", "down", "strict_up", "strict_down") for i in names]
 ov = pd.DataFrame(ov, columns=["direction", "stress"] + names)
-ov.to_csv(f"{P}/results/{TAG}_label_overlap.tsv", sep="\t", index=False)
+ov.to_csv(f"{P}/{NAMES[2]}", sep="\t", index=False)
 allup = set().union(*[sets[s]["up"] for s in names]); alldn = set().union(*[sets[s]["down"] for s in names])
 pd.set_option("display.width", 250)
 print(cnt.to_string(index=False))

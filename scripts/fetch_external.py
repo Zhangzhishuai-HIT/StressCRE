@@ -11,7 +11,7 @@ import datetime, hashlib, os, sys, threading, urllib.request
 
 LIST = sys.argv[1]
 NT = int(sys.argv[2]) if len(sys.argv) > 2 else 4
-opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))   # never the VPS proxy
+opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))   # direct connections
 lock = threading.Lock()
 
 
