@@ -1,8 +1,8 @@
 """Figure 3: prediction accuracy of StressCRE and the comparison models (test sets, expression-matched AUPRC).
 
 A: fold enrichment (matched AUPRC / matched prevalence) per task, mean and range over the three fold assignments.
-B: mean matched AUPRC over the nine main tasks in the three test designs.
-C: StressCRE minus gene features + k-mers, matched AUPRC difference with 95% bootstrap CI, one point per seed.
+B: StressCRE minus gene features + k-mers, matched AUPRC difference with 95% bootstrap CI, one point per fold assignment.
+C: mean matched AUPRC over the nine main tasks in the three test designs.
 Usage: python -I fig_performance.py <project>     -> figures/fig3_performance.pdf/.png
 """
 import os, sys

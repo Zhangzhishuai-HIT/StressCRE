@@ -7,7 +7,8 @@ B: mean net contribution of exact ABRE sites (ACGTGG/T, either strand) in the wi
    100-bp bin of the TSS half and the TTS half (results/abre_contrib_position.tsv from abre_contrib.py).
 C: enrichment of known elements within 500 bp of the TSS among responsive genes (log2 odds ratio; data); dots,
    Benjamini-Hochberg q < 0.05 over the 70 tests.
-D: change in StressCRE's log odds when one element is written 150 bp upstream of the TSS of 100 non-responsive genes.
+D: change in StressCRE's log odds when one element is written 150 bp upstream of the TSS of non-responsive genes (98 of
+   the 100 genes; constructs overlapping masked bases skipped).
 E: the same for the ABRE at different positions (TSS: upstream offsets; TTS: downstream offsets).
 Usage: python -I fig_motifs.py <project>      -> figures/fig4_elements.pdf/.png
 """

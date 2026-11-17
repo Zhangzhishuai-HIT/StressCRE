@@ -46,7 +46,7 @@ Python 3.10 with PyTorch 2.5.1, transformers 4.46.3, mamba_ssm and causal_conv1d
 ## Input data (public)
 
 - RNA-seq runs of the stress studies (NCBI SRA, DDBJ and ENA; BioProject accessions in Table S1 of the article) and of the Plant Gene Atlas of Williams 82 (Sreedasyam et al. 2023), processed with fastp and salmon on the Wm82.a4 transcripts.
-- Wm82.a4 genome and gene models (Valliyodan et al. 2019).
+- Wm82.a4 genome and gene models (Valliyodan et al. 2019), and the Wm82.a2 genome and gene models (Song et al. 2016) for the SNP windows.
 - PlantCAD2-Small weights (Hugging Face, kuleshov-group).
 - Soybean DAP-seq peaks of 148 transcription factors (Jiao et al. 2024, SoyTFBase) and JASPAR 2024 CORE plants motifs.
 - DeepCRE soybean models (Peleke et al. 2024) and the released adapters of Koh et al. (2026).

@@ -20,6 +20,7 @@ the result.
       sequence): odds ratio for large-effect vs other SNPs, and the share of such SNPs whose effect on the five
       up-regulation tasks (mean delta) has the expected sign (destroyed -> lower, created -> higher), and the odds
       ratio of being rare for ABRE-destroying (or -creating) vs other SNPs (n_large column = SNPs of that kind);
+      and, per group, the share of ABRE-changing SNPs whose alternative allele is the minor allele;
   (4) per gene (StressCRE set): number of common large-effect SNPs.
 Usage: python -I variant_analysis.py <project>
 Writes results/variant_summary.tsv, results/variant_genes.tsv.gz, variants/scored_snps.tsv.gz (StressCRE set).
@@ -182,6 +183,14 @@ def analyse(name, delta):
             rows.append(dict(model=name, analysis=f"ABRE {kind} -> rare (MAF<5%), {grp}", n=int(poly.sum()), n_large=int((m & poly).sum()),
                              share_a=round(rare[m & poly].mean(), 4), share_b=round(rare[~m & poly].mean(), 4), odds_ratio=round(o_, 5),
                              ci_lo=round(lo_, 5), ci_hi=round(hi_, 5), p=float(f"{p_:.3g}"), strata=k_, threshold=round(thr, 5)))
+    for grp, col in (("wild", "af_soja"), ("cultivated", "af_max")):
+        poly = (snp[col].values > 0) & (snp[col].values < 1)
+        for kind in ("destroyed", "created"):       # the rare-allele test reads MAF; this gives which allele is the minor one
+            m = (snp.abre == kind).values & poly
+            rows.append(dict(model=name, analysis=f"ABRE {kind}: share with the alternative allele as the minor allele, {grp}",
+                             n=int(poly.sum()), n_large=int(m.sum()), share_a=round(float((snp[col].values[m] < 0.5).mean()), 4),
+                             share_b=round(float((snp[col].values[poly & (snp.abre == "none").values] < 0.5).mean()), 4),
+                             odds_ratio=np.nan, ci_lo=np.nan, ci_hi=np.nan, p=np.nan, strata=0, threshold=round(thr, 5)))
     dup = d[:, UPJ].mean(1)
     for kind, sign in (("destroyed", -1), ("created", 1)):
         m = (snp.abre == kind).values

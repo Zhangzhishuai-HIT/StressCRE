@@ -6,13 +6,14 @@ matrix (CWM) is trimmed to the positions whose summed |CWM| reaches 30% of its m
 20 bp (diffuse, mostly compositional) to the 20-bp window with the largest summed |CWM|; the frequency matrix of the
 trimmed positions is written in MEME format and compared with Tomtom (MEME suite 5.5.9; Pearson distance, min
 overlap 5) to JASPAR 2024 CORE plants and to the soybean DAP-seq library (features/soy_dapseq_streme_c100.meme);
-the best match with q < 0.05 is kept. Seqlet centres are given relative to the TSS (window positions 0-1499,
+the best match with q < 0.05 is kept. The share of sites whose trimmed positions contain an exact ACGTG core (either
+strand) is recorded. Seqlet centres are given relative to the TSS (window positions 0-1499,
 TSS = position 1000) or the TTS (positions 1520-3019, TTS = position 2019).
 
 Usage: python -I modisco_motifs.py <project>
 Writes work/modisco/patterns.meme, results/modisco_patterns.tsv, results/modisco_seqlets.tsv.gz.
 """
-import os, subprocess, sys
+import os, re, subprocess, sys
 import h5py
 import numpy as np
 import pandas as pd
@@ -46,12 +47,16 @@ for t in TASKS:
             name = f"{t}|{mc[:3]}|{k.split('_')[1]}"
             s = g["seqlets"]
             n = len(s["start"])
+            sq = s["sequence"][:, lo:hi]                   # aligned one-hot sites; masked bases are all zero (N)
+            txt = np.where(sq.max(2) > 0, np.array(list("ACGT"))[sq.argmax(2)], "N")
+            core = np.mean([bool(re.search("ACGTG|CACGT", "".join(r))) for r in txt])   # exact ACGTG core, either strand
             ctr = (s["start"][:] + s["end"][:]) / 2
             rel = np.where(ctr < 1500, ctr - 1000, np.where(ctr >= 1520, ctr - 2019, np.nan))
             in_tss = ctr < 1500
             rows.append(dict(task=t, metacluster=mc[:3], pattern=int(k.split("_")[1]), name=name, n_seqlets=n,
                              n_genes=len(set(s["example_idx"][:])), consensus=cons, width=hi - lo,
-                             cwm_sum=round(float(cwm[lo:hi].sum()), 4), frac_tss_half=round(float(in_tss.mean()), 3),
+                             cwm_sum=round(float(cwm[lo:hi].sum()), 4), share_acgtg_core=round(float(core), 3),
+                             frac_tss_half=round(float(in_tss.mean()), 3),
                              median_pos_tss_half=float(np.nanmedian(rel[in_tss])) if in_tss.any() else np.nan,
                              median_pos_tts_half=float(np.nanmedian(rel[~in_tss & (ctr >= 1520)])) if (ctr >= 1520).any() else np.nan))
             for e, c, rcf in zip(s["example_idx"][:], ctr, s["is_revcomp"][:]):
