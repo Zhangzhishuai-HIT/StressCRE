@@ -80,13 +80,13 @@ for m in ["cov", "kmer", "stack", "deepcre", "motif", "cnn", "pc2", "cand3"]:   
     r = dict(model=m)
     q = te[(te.model == m) & te.task.isin(MAIN9)]
     if len(q):
-        r["main"] = round(q.groupby("seed").auprc_matched.mean().mean(), 4)
-        r["main_sd"] = round(q.groupby("seed").auprc_matched.mean().std(), 4)
+        r["main"] = round(q.groupby("seed").auprc_matched.mean().mean(), 6)
+        r["main_sd"] = round(q.groupby("seed").auprc_matched.mean().std(), 6)
     for sp in ("chrom", "random"):
         d = load_split(m, sp)
         if d is not None:
             sc = scores(cov, d)
-            r[sp] = round(float(np.mean([sc[t]["auprc_matched"] for t in MAIN9 if t in sc])), 4)
+            r[sp] = round(float(np.mean([sc[t]["auprc_matched"] for t in MAIN9 if t in sc])), 6)
     tests.append(r)
 tests = pd.DataFrame(tests)
 tests.to_csv(f"{P}/results/week2_tests.tsv", sep="\t", index=False)
@@ -98,13 +98,13 @@ for m in ["koh", "stack", "cand3"]:
     r = dict(model=m)
     q = te[(te.model == m) & te.task.isin(K8)]
     if len(q):
-        r["main"] = round(q.groupby("seed").auprc_matched.mean().mean(), 4)
+        r["main"] = round(q.groupby("seed").auprc_matched.mean().mean(), 6)
         r["main_auroc"] = np.nan
     for sp in ("chrom", "random"):
         d = load_split(m, sp)
         if d is not None:
             sc = scores(cov, d)
-            r[sp] = round(float(np.mean([sc[t]["auprc_matched"] for t in K8 if t in sc])), 4)
+            r[sp] = round(float(np.mean([sc[t]["auprc_matched"] for t in K8 if t in sc])), 6)
     kr.append(r)
 kr = pd.DataFrame(kr).drop(columns="main_auroc")
 if len(kr) and "main" in kr and kr.main.notna().all():

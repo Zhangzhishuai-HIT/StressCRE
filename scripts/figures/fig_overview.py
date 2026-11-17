@@ -66,7 +66,7 @@ box(133, Y1, 39, H1, "Test design", ["Gene groups: protein families,", "WGD pair
 for xa, xb in ((40.4, 44.6), (85.4, 89.6), (128.4, 132.6)):
     arrow(xa, Y1 + H1 / 2, xb, Y1 + H1 / 2)
 Y2, H2 = 3, 28
-box(2, Y2, 54, H2, "Elements", ["Contribution scores + TF-MoDISco-lite: the ABRE", "(ACGTGG/T) is the main element of all five", "up-regulation tasks (3–11% of the positive", "contribution in 0.3–0.4% of the bases)", "Insertion into non-responsive genes: strongest", "near the TSS, both orientations, two ABREs", "more than additive"])
+box(2, Y2, 54, H2, "Elements", ["Contribution scores + TF-MoDISco-lite: the ABRE", "(ACGTGG/T) is the main learned element of all five", "up-regulation tasks (3–11% of the positive", "contribution in 0.3–0.4% of the bases)", "Insertion into non-responsive genes: strongest", "near the TSS, both orientations, two ABREs", "more than additive"])
 box(60, Y2, 54, H2, "WGD paralogs", ["15,487 pairs; 328 divergent in at least one task", "The responding copy is the more tissue-", "specific one (61% of divergent cases)", "Copy-specific windows do not predict", "which copy responds"])
 box(118, Y2, 54, H2, "Natural variation", ["1,511 accessions: 3.2 million SNP–gene", "combinations; large predicted effects enriched", "for ABRE gains and losses; alleles that", "destroy an ABRE are more often rare", "Wild soybean W05: salt response predicted", "from its orthologs (AUROC 0.80; tau alone", "0.77; W05 not used in training)"])
 for xm in (29, 87, 145):

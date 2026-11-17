@@ -1,8 +1,8 @@
 """Robustness of the accuracy comparison to window similarity that remains between training and test genes.
 
 Window similarity: megablast hits between windows of different genes that do not overlap in the genome
-(work/psim/a4_win_edges.m8, the hits used by make_splits.py) with >= 90% identity over >= 300 bp. Most such windows
-share transposon fragments and were deliberately not grouped (make_splits.py groups only windows with at most two
+(work/psim/a4_win_edges.m8, the hits used by make_splits.py) with >= 90% identity over >= 300 bp. Such windows
+were not grouped when below 95% identity or with more than two alignments (make_splits.py groups only windows with at most two
 alignments at >= 95%).
   Main design: test genes flagged in splits/fold_seed<s>.tsv (promoter_similar_in_other_fold = such a window in a gene
                of another fold) are removed from the test predictions of StressCRE and of gene features + k-mers.

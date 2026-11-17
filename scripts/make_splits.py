@@ -3,12 +3,12 @@
 Connected groups (union-find over the 52,872 Wm82.a4 genes), edges from:
   (1) MMseqs2 30% protein families      work/fam/a4_c30_cluster.tsv
   (2) WGD paralog pairs                  results/wgd_pairs.tsv
-  (3) gene-specific promoter similarity: megablast hits between windows that do NOT overlap in the
-      genome, >= 95% identity over >= 300 bp, both windows with <= 2 such partners.
+  (3) window similarity: megablast hits between windows that do NOT overlap in the genome, >= 95% identity
+      over >= 300 bp, both windows with <= 2 such alignments (rows of the hit table).
       Why so strict (measured 2026-11-10): at >= 80% / 200 bp, 120,636 window pairs at different loci
-      are similar (shared transposon fragments) and chain 84% of all genes into one group; overlapping
+      are similar and chain 84% of all genes into one group; overlapping
       neighbour windows (identical sequence by position, 17,500 pairs) chain genes along chromosomes.
-      Shared TE content is a regulatory signal the model may legitimately learn; homology leakage is
+      Shared repeated sequence can be a regulatory signal the model may legitimately learn; homology leakage is
       handled by (1), (2) and CDS masking. Residual effect is reported as a diagnostic (test genes with
       a >= 90% / 300 bp promoter-similar training gene vs without).
 Main split  : groups -> 5 folds, greedy balanced on genes and on pilot positives, seeds 0, 1, 2.
@@ -101,7 +101,7 @@ for rule in [(95, 300, 2), (98, 300, 3), None]:
     print(f"largest group {max(sizes.values())} > 5% with promoter rule {rule}; falling back")
 n_ps = len(pe) // 2
 promoter_rule = "none" if rule is None else f">= {rule[0]}% over >= {rule[1]} bp, <= {rule[2]} partners, non-overlapping"
-# diagnostic set: any non-overlapping >= 90% / 300 bp promoter similarity (mostly shared TE fragments)
+# diagnostic set: any non-overlapping >= 90% / 300 bp window similarity (see similarity_diagnostic.py)
 ps90 = ps[(ps.pid >= 90) & (ps.alnlen >= 300)]
 te_like = collections.defaultdict(set)
 for q, t in zip(ps90.q, ps90.t):
