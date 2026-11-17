@@ -1,6 +1,6 @@
 # StressCRE
 
-Code for the manuscript *StressCRE: a sequence model of soybean responses to five abiotic stresses identifies the ABA-responsive element as their shared activating cis-element*.
+Code for the manuscript *StressCRE: a sequence model of soybean responses to five abiotic stresses identifies the ABA-responsive element as a shared activating cis-element*.
 
 StressCRE predicts whether a soybean (*Glycine max*, Wm82.a4) gene is up-regulated, down-regulated or non-responsive under drought, salt, heat, cold and alkaline stress (ten tasks). It reads a 3,020-bp window around each gene (1,000 bp upstream to 500 bp downstream of the transcription start site, 20 N, 500 bp upstream to 1,000 bp downstream of the transcript end; coding sequence masked) with two networks:
 
@@ -28,7 +28,7 @@ Paths at the top of the scripts point to the authors' cluster; set them to your 
 |---|---|
 | Stress-versus-control comparisons, DESeq2 per comparison | `contrasts.py`, `inventory_contrasts.py`, `de_prepare.py`, `de_run.R`, `jobs/pilot_de.sbatch` |
 | Labels (vote over studies and random-effects meta-analysis) | `pilot_labels.py` (`pilot_labels.py work/de_v1 <project> v1` writes `labels/labels_v1.tsv.gz`) |
-| Sequence windows and gene features | `make_windows.py`, `check_windows.py`, `gene_features.py`, `kmer_features.py`, `embed_plantcad2.py` |
+| Sequence windows and gene features | `make_windows.py`, `check_windows.py`, `gene_features.py`, `kmer_features.py`, `embed_plantcad2.py`, `fix_embed_chunk_rows.py` |
 | Gene groups and folds (protein families, WGD pairs, similar windows) | `jobs/protein_families.sbatch`, `paralog_pairs.py`, `jobs/promoter_sim.sbatch`, `make_splits.py` |
 | StressCRE | `cre_models.py`, `train_cre.py`, `cre_data.py` |
 | Comparison models | `baseline_kmer.py`, `baseline_lgbm.py`, `stack_oof.py`, `motif_scan.py`, `baseline_motif.py`, `deepcre_baseline.py`, `koh_baseline.py` |

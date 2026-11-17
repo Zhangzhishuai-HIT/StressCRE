@@ -1,7 +1,7 @@
 #!/bin/bash
 # StressCRE mamba env, stage 1 (CPU stack for labels, features, baselines, motif tools).
-# Stage 2 (GPU: torch 2.5.1+cu124 with mamba_ssm/causal_conv1d for PlantCAD2) is added before plan
-# step 4's PlantCAD2 candidate; see the README (environment).
+# Stage 2 (GPU: torch 2.5.1+cu124 with mamba_ssm/causal_conv1d for PlantCAD2): jobs/setup_env_gpu.sh; see the README
+# (Requirements).
 # Why not clone zuowu_genomemodel (2026-11-10): mamba 2.4 has no --clone; conda's clone re-downloads
 # every package (its pkgs_dirs lack mamba's cache) and fails on unmirrored nvidia packages
 # (anaconda.org, HTTP 000); with CONDA_PKGS_DIRS + --offline it still rejects the cache, because the

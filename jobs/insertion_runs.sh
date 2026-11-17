@@ -1,6 +1,7 @@
 #!/bin/bash
 # In-silico insertions as run for the paper (GPU; the project copy and the trained fold models on the GPU machine).
-#   bash jobs/insertion_runs.sh <model_dir>        (model_dir: the folder with the StressCRE fold models)
+#   bash jobs/insertion_runs.sh <plantcad2_dir>    (the PlantCAD2-Small weights; the StressCRE fold models are read from
+#                                                   models/v1_*_main_seed*/ of the project)
 # 1. main run: ten elements at eight TSS positions, reverse orientation, TTS positions and pairs
 # 2. single sites at -132 bp (the position of the second site in pairs that begin with an ABRE)
 # 3. merge the two runs and add the change in log odds

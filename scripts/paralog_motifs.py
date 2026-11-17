@@ -6,14 +6,16 @@ stress are counted on both strands (regular expressions on the unmasked bases of
 -1000..+500, and of the TTS half): ABRE ACGTG(G|T) for drought and salt, DRE/CRT CCGAC for cold (and drought),
 HSE nGAAnnTTCn for heat, W-box TTGAC(C|T) and G-box CACGTG as further references.
 Reported per task x element: pairs, share of pairs in which the responding copy has more sites (among pairs whose
-counts differ), sign-test P, and the same for all pairs whose two copies are both labelled, against the measured
-log2 fold-change difference (Spearman).
+counts differ), sign-test P with the Benjamini-Hochberg q over all tests that have pairs with differing counts, and,
+for all pairs whose two copies are both labelled, the Spearman correlation between the count difference and the
+measured log2 fold-change difference (sign flipped for the down tasks).
 Usage: python -I paralog_motifs.py <project>    -> results/paralog_motifs.tsv
 """
 import gzip, os, re, sys
 import numpy as np
 import pandas as pd
 from scipy.stats import binomtest, spearmanr
+from statsmodels.stats.multitest import multipletests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from cre_data import strict_calls   # noqa: E402
@@ -69,9 +71,14 @@ for s in ["drought", "salt", "heat", "cold", "alkaline"]:
                 r = spearmanr(na[ok] - nb[ok], meas[ok]).correlation if ok.sum() > 10 else np.nan
                 rows.append(dict(task=f"{s}-{d}", element=k, half=h, divergent_pairs=int(div.sum()), pairs_differing=len(nz),
                                  responder_more=more, share_responder_more=round(more / len(nz), 3) if len(nz) else np.nan,
-                                 sign_test_p=float(f"{p:.3g}") if len(nz) else np.nan, labelled_pairs=int(ok.sum()),
+                                 sign_test_p=float(f"{p:.3g}") if len(nz) else np.nan, p_raw=p if len(nz) else np.nan,
+                                 labelled_pairs=int(ok.sum()),
                                  spearman_count_diff_vs_lfc_diff=round(r, 4) if r == r else np.nan))
 out = pd.DataFrame(rows)
+has_p = out.p_raw.notna()
+out.insert(out.columns.get_loc("sign_test_p") + 1, "sign_test_q", np.nan)
+out.loc[has_p, "sign_test_q"] = [float(f"{x:.3g}") for x in multipletests(out.p_raw[has_p], method="fdr_bh")[1]]
+out = out.drop(columns="p_raw")
 out.to_csv(f"{P}/results/paralog_motifs.tsv", sep="\t", index=False)
 pd.set_option("display.width", 250)
 key = out[((out.task.isin(["drought-up", "salt-up"])) & (out.element == "ABRE")) | ((out.task == "cold-up") & (out.element == "DRE/CRT")) |
