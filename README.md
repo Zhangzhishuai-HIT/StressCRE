@@ -37,6 +37,7 @@ Paths at the top of the scripts point to the authors' cluster; set them to your 
 | WGD paralog pairs | `predict_all.py`, `paralog_analysis.py`, `paralog_motifs.py`, `jobs/paralog_motifs.sbatch` |
 | Natural variants | `variant_sites.py`, `jobs/variant_af.sbatch`, `score_variants.py`, `variant_analysis.py` |
 | Wild soybean W05 | `w05_orthologs.py`, `w05_homwindows.py`, `predict_w05.py`, `w05_analysis.py` |
+| Other numbers quoted in the text (expression-context medians, TTS-half ABRE shares, similarity check) | `text_numbers.py` |
 | External files (direct downloads with checksums) | `fetch_external.py` |
 
 ## Requirements
